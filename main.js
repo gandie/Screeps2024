@@ -1,6 +1,7 @@
 var roleHarvester = require('harvester');
 
 var lean_harvester = require('lean_harvester');
+var lean_logistics = require('lean_logistics');
 
 var roleUpgrader = require('upgrader');
 var roleBuilder = require('builder');
@@ -13,7 +14,7 @@ module.exports.loop = function () {
 
     for(var room in Game.rooms) {
         var cur_room = Game.rooms[room];
-        if (!cur_room.memory) {
+        if (!cur_room.memory.sources) {
             cur_room.memory = {
                 sources: {
                     0: {
@@ -44,6 +45,9 @@ module.exports.loop = function () {
         }
         if(creep.memory.role == 'lean_harvester') {
             lean_harvester.run(creep);
+        }
+        if(creep.memory.role == 'lean_logistics') {
+            lean_logistics.run(creep);
         }
     }
 }

@@ -18,7 +18,7 @@ var spawner = {
             if(!Game.creeps[name]) {
                 // XXX: Make this room aware as soon as all creeps have room in memory
                 if (Memory.creeps[name].role == 'lean_harvester') {
-                    Memory.rooms[room].sources[Memory.creeps[name].source].cur -= 1;
+                    Memory.rooms[Memory.creeps[name].room].sources[Memory.creeps[name].source].cur -= 1;
                 }
                 delete Memory.creeps[name];
                 console.log('Clearing non-existing creep memory:', name);
@@ -29,30 +29,43 @@ var spawner = {
             harvester: {
                 limit: 2,
                 body: [WORK,CARRY,MOVE],
+                upgrade_tmpl: [WORK,MOVE],
                 memory: {
                     role: "harvester",
                     room: room,
                 },
             },
             lean_harvester: {
-                limit: 0,
+                limit: 1,
                 body: [WORK,MOVE],
+                upgrade_tmpl: [WORK],
                 memory: {
                     role: "lean_harvester",
                     room: room,
                 },
             },
+            lean_logistics: {
+                limit: 1,
+                body: [CARRY,MOVE],
+                upgrade_tmpl: [CARRY,MOVE],
+                memory: {
+                    role: "lean_logistics",
+                    room: room,
+                },
+            },
             builder: {
-                limit: 2,
+                limit: 1,
                 body: [WORK,CARRY,MOVE],
+                upgrade_tmpl: [WORK,MOVE],
                 memory: {
                     role: "builder",
                     room: room,
                 },
             },
             upgrader: {
-                limit: 3,
+                limit: 2,
                 body: [WORK,CARRY,MOVE],
+                upgrade_tmpl: [WORK,MOVE],
                 memory: {
                     role: "upgrader",
                     room: room,
@@ -62,11 +75,9 @@ var spawner = {
 
         for(var role in roles) {
             var role_settings = roles[role];
-            while (bodyCost(role_settings.body) < cur_room.energyAvailable - 150) {
-                role_settings.body.push(WORK);
-                if (role != 'lean_harvester') {
-                    role_settings.body.push(MOVE);
-                }
+            var upgrade_tmpl = role_settings.upgrade_tmpl;
+            while (bodyCost(role_settings.body) < cur_room.energyAvailable - bodyCost(upgrade_tmpl)) {
+                role_settings.body.push(...upgrade_tmpl);
             }
         }
     
@@ -84,6 +95,7 @@ var spawner = {
                             cur_source.cur += 1;
                             //Memory.rooms[room].sources[source_index].cur += 1;
                             role_settings.memory['source'] = source_index;
+                            console.log("lean_harvester found source: " + source_index)
                             break;
                         }
                     }
