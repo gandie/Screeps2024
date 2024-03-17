@@ -48,8 +48,9 @@ var leanLogistics = {
                 });
             }
             if (targets.length) {
-                if(creep.transfer(targets[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(targets[0], {visualizePathStyle: {stroke: '#0000ff'}});
+                const closest = creep.pos.findClosestByRange(targets);
+                if(creep.transfer(closest, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+                    creep.moveTo(closest, {visualizePathStyle: {stroke: '#0000ff'}});
                 }
             }            
         } else {
@@ -73,7 +74,7 @@ var leanLogistics = {
                 }
             } else {
                 if(creep.pickup(target) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(target);
+                    creep.moveTo(target, {visualizePathStyle: {stroke: '#0000ff'}});
                 }
             }
 
