@@ -10,11 +10,9 @@ var spawner = {
     run: function(room) {
 
         var cur_room = Game.rooms[room];
-
         const cur_spawn = cur_room.find(FIND_MY_SPAWNS)[0];
 
         for(var name in Memory.creeps) {
-
             if(!Game.creeps[name]) {
                 if (Memory.creeps[name].role == 'lean_harvester') {
                     if (Memory.creeps[name].source) {
@@ -55,7 +53,7 @@ var spawner = {
                 },
             },
             lean_upgrader: {
-                limit: 6,
+                limit: 3,
                 body: [WORK,CARRY,MOVE],
                 upgrade_tmpl: [WORK,CARRY,MOVE,MOVE],
                 memory: {
