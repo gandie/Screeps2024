@@ -24,14 +24,23 @@ var spawner = {
             harvester: {
                 limit: 2,
                 body: [WORK,CARRY,MOVE],
+                memory: {
+                    role: "harvester",
+                },
             },
             builder: {
                 limit: 2,
                 body: [WORK,CARRY,MOVE],
+                memory: {
+                    role: "builder",
+                },
             },
             upgrader: {
                 limit: 3,
                 body: [WORK,CARRY,MOVE],
+                memory: {
+                    role: "upgrader",
+                },
             },
         }
 
@@ -53,9 +62,7 @@ var spawner = {
                     role_settings.body,
                     newName,
                     {
-                        memory: {
-                            role: role,
-                        },
+                        memory: role_settings.memory,
                     }
                 )
             }

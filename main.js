@@ -9,6 +9,19 @@ module.exports.loop = function () {
     tower.run();
 
     for(var room in Game.rooms) {
+        var cur_room = Game.rooms[room];
+        cur_room.memory = {
+            sources: {
+                0: {
+                    cur: 0,
+                    limit: 5,
+                },
+                1: {
+                    cur: 0,
+                    limit: 4,
+                },
+            }
+        }
         spawner.run(room);
     }
 
