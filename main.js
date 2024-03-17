@@ -1,4 +1,7 @@
 var roleHarvester = require('harvester');
+
+var lean_harvester = require('lean_harvester');
+
 var roleUpgrader = require('upgrader');
 var roleBuilder = require('builder');
 var spawner = require('spawner');
@@ -10,16 +13,18 @@ module.exports.loop = function () {
 
     for(var room in Game.rooms) {
         var cur_room = Game.rooms[room];
-        cur_room.memory = {
-            sources: {
-                0: {
-                    cur: 0,
-                    limit: 5,
-                },
-                1: {
-                    cur: 0,
-                    limit: 4,
-                },
+        if (!cur_room.memory) {
+            cur_room.memory = {
+                sources: {
+                    0: {
+                        cur: 0,
+                        limit: 5,
+                    },
+                    1: {
+                        cur: 0,
+                        limit: 4,
+                    },
+                }
             }
         }
         spawner.run(room);
@@ -36,6 +41,9 @@ module.exports.loop = function () {
         }
         if(creep.memory.role == 'builder') {
             roleBuilder.run(creep);
+        }
+        if(creep.memory.role == 'lean_harvester') {
+            lean_harvester.run(creep);
         }
     }
 }

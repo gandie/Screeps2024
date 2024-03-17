@@ -18,7 +18,7 @@ var spawner = {
             if(!Game.creeps[name]) {
                 // XXX: Make this room aware as soon as all creeps have room in memory
                 if (Memory.creeps[name].role == 'lean_harvester') {
-                    Memory.rooms[cur_room].sources[Memory.creeps[name].source].cur -= 1;
+                    Memory.rooms[room].sources[Memory.creeps[name].source].cur -= 1;
                 }
                 delete Memory.creeps[name];
                 console.log('Clearing non-existing creep memory:', name);
@@ -31,6 +31,14 @@ var spawner = {
                 body: [WORK,CARRY,MOVE],
                 memory: {
                     role: "harvester",
+                    room: room,
+                },
+            },
+            lean_harvester: {
+                limit: 0,
+                body: [WORK,MOVE],
+                memory: {
+                    role: "lean_harvester",
                     room: room,
                 },
             },
@@ -56,7 +64,9 @@ var spawner = {
             var role_settings = roles[role];
             while (bodyCost(role_settings.body) < cur_room.energyAvailable - 150) {
                 role_settings.body.push(WORK);
-                role_settings.body.push(MOVE);
+                if (role != 'lean_harvester') {
+                    role_settings.body.push(MOVE);
+                }
             }
         }
     
@@ -72,6 +82,7 @@ var spawner = {
                         var cur_source = cur_room.memory.sources[source_index];
                         if (cur_source.cur < cur_source.limit) {
                             cur_source.cur += 1;
+                            //Memory.rooms[room].sources[source_index].cur += 1;
                             role_settings.memory['source'] = source_index;
                             break;
                         }
