@@ -98,12 +98,20 @@ var spawner = {
             while (bodyCost(role_settings.body) < cur_room.energyAvailable - bodyCost(upgrade_tmpl)) {
                 role_settings.body.push(...upgrade_tmpl);
             }
+            if (role == 'builder' || role == 'lean_builder') {
+                if (!cur_room.find(FIND_CONSTRUCTION_SITES).length) {
+                    role_settings.limit = 0;
+                }
+            }
         }
 
         if (!cur_spawn.spawning) {
             for(var role in roles) {
                 var role_settings = roles[role];
-                var role_creeps =  _.filter(Game.creeps, (creep) => creep.memory.role == role);
+                var role_creeps =  _.filter(
+                    Game.creeps,
+                    (creep) => (creep.memory.role == role) && (creep.memory.room == room)
+                );
                 if (role_creeps.length < role_settings.limit) {
                     var newName = role + Game.time;
     

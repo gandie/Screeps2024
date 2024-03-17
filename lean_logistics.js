@@ -48,7 +48,13 @@ var leanLogistics = {
                 if(creep.pickup(target) == ERR_NOT_IN_RANGE) {
                     creep.moveTo(target);
                 }
-            }            
+            }
+            /*
+            var targets = creep.room.find(FIND_DROPPED_RESOURCES);
+            var logists = 
+            for (var tgt_index in targets) {
+            }
+            */
         }
     }
 };
