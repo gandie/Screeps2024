@@ -26,7 +26,6 @@ var spawner = {
     
         var roles = {
             harvester: {
-                limit: 0,
                 body: [WORK,CARRY,MOVE],
                 upgrade_tmpl: [WORK,MOVE],
                 memory: {
@@ -35,7 +34,6 @@ var spawner = {
                 },
             },
             lean_harvester: {
-                limit: 4,
                 body: [WORK,MOVE],
                 upgrade_tmpl: [WORK],
                 memory: {
@@ -44,7 +42,6 @@ var spawner = {
                 },
             },
             lean_logistics: {
-                limit: 2,
                 body: [CARRY,MOVE],
                 upgrade_tmpl: [CARRY,MOVE],
                 memory: {
@@ -53,7 +50,6 @@ var spawner = {
                 },
             },
             lean_upgrader: {
-                limit: 3,
                 body: [WORK,CARRY,MOVE],
                 upgrade_tmpl: [WORK,CARRY,MOVE,MOVE],
                 memory: {
@@ -62,7 +58,6 @@ var spawner = {
                 },
             },
             lean_builder: {
-                limit: 2,
                 body: [WORK,CARRY,MOVE],
                 upgrade_tmpl: [WORK,CARRY,MOVE,MOVE],
                 memory: {
@@ -71,7 +66,6 @@ var spawner = {
                 },
             },
             builder: {
-                limit: 0,
                 body: [WORK,CARRY,MOVE],
                 upgrade_tmpl: [WORK,MOVE],
                 memory: {
@@ -80,7 +74,6 @@ var spawner = {
                 },
             },
             upgrader: {
-                limit: 0,
                 body: [WORK,CARRY,MOVE],
                 upgrade_tmpl: [WORK,MOVE],
                 memory: {
@@ -96,11 +89,6 @@ var spawner = {
             while (bodyCost(role_settings.body) < cur_room.energyAvailable - bodyCost(upgrade_tmpl)) {
                 role_settings.body.push(...upgrade_tmpl);
             }
-            if (role == 'builder' || role == 'lean_builder') {
-                if (!cur_room.find(FIND_CONSTRUCTION_SITES).length) {
-                    role_settings.limit = 0;
-                }
-            }
         }
 
         if (!cur_spawn.spawning) {
@@ -110,7 +98,16 @@ var spawner = {
                     Game.creeps,
                     (creep) => (creep.memory.role == role) && (creep.memory.room == room)
                 );
-                if (role_creeps.length < role_settings.limit) {
+                var role_limit = cur_room.memory.spawn_limits[role];
+
+                // limit override for builder: dont spawn if nothing to build
+                if (role == 'builder' || role == 'lean_builder') {
+                    if (!cur_room.find(FIND_CONSTRUCTION_SITES).length) {
+                        role_limit = 0;
+                    }
+                }
+
+                if (role_creeps.length < role_limit) {
                     var newName = role + Game.time;
     
                     var canspawn = cur_spawn.spawnCreep(

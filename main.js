@@ -30,6 +30,17 @@ module.exports.loop = function () {
                 }
             }
         }
+        if (!cur_room.memory.spawn_limits) {
+            cur_room.memory.spawn_limits = {
+                harvester: 0,
+                lean_harvester: 0,
+                upgrader: 0,
+                lean_upgrader: 0,
+                builder: 0,
+                lean_builder: 0,
+                lean_logistics: 0,
+            }
+        }
         spawner.run(room);
     }
 
