@@ -1,6 +1,6 @@
 var tower = {
     run: function() {
-        var tower = Game.getObjectById('TOWER_ID');
+        var tower = Game.getObjectById('bfffd20afd17fcb');
         if(tower) {
             var closestDamagedStructure = tower.pos.findClosestByRange(FIND_STRUCTURES, {
                 filter: (structure) => structure.hits < structure.hitsMax

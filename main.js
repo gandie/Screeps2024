@@ -2,6 +2,8 @@ var roleHarvester = require('harvester');
 
 var lean_harvester = require('lean_harvester');
 var lean_logistics = require('lean_logistics');
+var lean_upgrader = require('lean_upgrader');
+var lean_builder = require('lean_builder');
 
 var roleUpgrader = require('upgrader');
 var roleBuilder = require('builder');
@@ -19,11 +21,11 @@ module.exports.loop = function () {
                 sources: {
                     0: {
                         cur: 0,
-                        limit: 5,
+                        limit: 2,
                     },
                     1: {
                         cur: 0,
-                        limit: 4,
+                        limit: 2,
                     },
                 }
             }
@@ -48,6 +50,12 @@ module.exports.loop = function () {
         }
         if(creep.memory.role == 'lean_logistics') {
             lean_logistics.run(creep);
+        }
+        if(creep.memory.role == 'lean_upgrader') {
+            lean_upgrader.run(creep);
+        }
+        if(creep.memory.role == 'lean_builder') {
+            lean_builder.run(creep);
         }
     }
 }

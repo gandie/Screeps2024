@@ -27,7 +27,7 @@ var spawner = {
     
         var roles = {
             harvester: {
-                limit: 2,
+                limit: 0,
                 body: [WORK,CARRY,MOVE],
                 upgrade_tmpl: [WORK,MOVE],
                 memory: {
@@ -36,7 +36,7 @@ var spawner = {
                 },
             },
             lean_harvester: {
-                limit: 1,
+                limit: 4,
                 body: [WORK,MOVE],
                 upgrade_tmpl: [WORK],
                 memory: {
@@ -45,7 +45,7 @@ var spawner = {
                 },
             },
             lean_logistics: {
-                limit: 1,
+                limit: 2,
                 body: [CARRY,MOVE],
                 upgrade_tmpl: [CARRY,MOVE],
                 memory: {
@@ -53,8 +53,26 @@ var spawner = {
                     room: room,
                 },
             },
+            lean_upgrader: {
+                limit: 6,
+                body: [WORK,CARRY,MOVE],
+                upgrade_tmpl: [WORK,CARRY,MOVE,MOVE],
+                memory: {
+                    role: "lean_upgrader",
+                    room: room,
+                },
+            },
+            lean_builder: {
+                limit: 2,
+                body: [WORK,CARRY,MOVE],
+                upgrade_tmpl: [WORK,CARRY,MOVE,MOVE],
+                memory: {
+                    role: "lean_builder",
+                    room: room,
+                },
+            },
             builder: {
-                limit: 1,
+                limit: 0,
                 body: [WORK,CARRY,MOVE],
                 upgrade_tmpl: [WORK,MOVE],
                 memory: {
@@ -63,7 +81,7 @@ var spawner = {
                 },
             },
             upgrader: {
-                limit: 2,
+                limit: 0,
                 body: [WORK,CARRY,MOVE],
                 upgrade_tmpl: [WORK,MOVE],
                 memory: {
@@ -80,37 +98,38 @@ var spawner = {
                 role_settings.body.push(...upgrade_tmpl);
             }
         }
-    
-        for(var role in roles) {
-            var role_settings = roles[role];
-            var role_creeps =  _.filter(Game.creeps, (creep) => creep.memory.role == role);
-            if (role_creeps.length < role_settings.limit) {
-                var newName = role + Game.time;
-                console.log("Spawning new: " + newName);
 
-                if (role == 'lean_harvester') {
-                    for(var source_index in cur_room.memory.sources) {
-                        var cur_source = cur_room.memory.sources[source_index];
-                        if (cur_source.cur < cur_source.limit) {
-                            cur_source.cur += 1;
-                            //Memory.rooms[room].sources[source_index].cur += 1;
-                            role_settings.memory['source'] = source_index;
-                            console.log("lean_harvester found source: " + source_index)
-                            break;
+        if (!Game.spawns['Home'].spawning) {
+            for(var role in roles) {
+                var role_settings = roles[role];
+                var role_creeps =  _.filter(Game.creeps, (creep) => creep.memory.role == role);
+                if (role_creeps.length < role_settings.limit) {
+                    var newName = role + Game.time;
+                    console.log("Spawning new: " + newName);
+    
+                    if (role == 'lean_harvester') {
+                        for(var source_index in cur_room.memory.sources) {
+                            var cur_source = cur_room.memory.sources[source_index];
+                            if (cur_source.cur < cur_source.limit) {
+                                cur_source.cur += 1;
+                                //Memory.rooms[room].sources[source_index].cur += 1;
+                                role_settings.memory['source'] = source_index;
+                                console.log("lean_harvester found source: " + source_index)
+                                break;
+                            }
                         }
                     }
+                    Game.spawns['Home'].spawnCreep(
+                        role_settings.body,
+                        newName,
+                        {
+                            memory: role_settings.memory,
+                        }
+                    )
+                    return;
                 }
-
-                Game.spawns['Home'].spawnCreep(
-                    role_settings.body,
-                    newName,
-                    {
-                        memory: role_settings.memory,
-                    }
-                )
             }
         }
-
     }
 }
 
