@@ -39,6 +39,9 @@ var role_map = {
 module.exports.loop = function () {
 
     for(var room in Game.rooms) {
+        // XXX: There should be an initializer or something an we should
+        // switch to calculating possible mining spots and assign them
+        // via room memory. The spice must flow.
         spawner.run(room)
         room_balancer.run(room)
         auto_buildings.run(room)
