@@ -15,18 +15,16 @@ var spawner = {
         // Make sure each room has memory.sources
         // and memory.spawn_limits set, both are needed
         if (!cur_room.memory.sources) {
-            cur_room.memory = {
-                sources: {
-                    0: {
-                        cur: 0,
-                        limit: 2,
-                    },
-                    1: {
-                        cur: 0,
-                        limit: 2,
-                    },
+            var sources = cur_room.find(FIND_SOURCES)
+            var new_sources = {}
+            for (var source_idx in sources) {
+                new_sources[source_idx] = {
+                    cur: 0,
+                    limit: 2,
                 }
             }
+            cur_room.memory.sources = new_sources
+            console.error(`Sources memory initialized for room ${room}`)
         }
         if (!cur_room.memory.spawn_limits) {
             cur_room.memory.spawn_limits = {
@@ -38,6 +36,7 @@ var spawner = {
                 lean_builder: 0,
                 lean_logistics: 0,
             }
+            console.error(`Spawn limit memory initialized for room ${room}`)
         }
 
         for(var name in Memory.creeps) {
@@ -51,7 +50,7 @@ var spawner = {
                 console.log('Clearing non-existing creep memory:', name);
             }
         }
-    
+
         var roles = {
             harvester: {
                 body: [WORK,CARRY,MOVE],
@@ -59,7 +58,6 @@ var spawner = {
                 vital: true,
                 memory: {
                     role: "harvester",
-                    room: room,
                 },
             },
             lean_harvester: {
@@ -68,7 +66,6 @@ var spawner = {
                 vital: true,
                 memory: {
                     role: "lean_harvester",
-                    room: room,
                 },
             },
             lean_logistics: {
@@ -77,7 +74,6 @@ var spawner = {
                 vital: true,
                 memory: {
                     role: "lean_logistics",
-                    room: room,
                 },
             },
             lean_upgrader: {
@@ -86,7 +82,6 @@ var spawner = {
                 vital: false,
                 memory: {
                     role: "lean_upgrader",
-                    room: room,
                 },
             },
             lean_builder: {
@@ -95,7 +90,6 @@ var spawner = {
                 vital: false,
                 memory: {
                     role: "lean_builder",
-                    room: room,
                 },
             },
             builder: {
@@ -104,7 +98,6 @@ var spawner = {
                 vital: false,
                 memory: {
                     role: "builder",
-                    room: room,
                 },
             },
             upgrader: {
@@ -113,7 +106,6 @@ var spawner = {
                 vital: false,
                 memory: {
                     role: "upgrader",
-                    room: room,
                 },
             },
         }
@@ -169,6 +161,8 @@ var spawner = {
                 if (role_creeps.length < role_limit) {
                     var newName = role + Game.time;
     
+                    role_settings.memory['room'] = room
+
                     var canspawn = cur_spawn.spawnCreep(
                         role_settings.body,
                         newName,
