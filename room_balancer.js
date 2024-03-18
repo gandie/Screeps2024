@@ -23,14 +23,27 @@ var room_balancer = {
         })
         var has_storage = storages.length != 0
 
-        console.log(
-            `room balancer in ${room} control level ${cur_controller.level} ${has_container} ${has_storage}`
-        )
+        var construction_sites = cur_room.find(FIND_CONSTRUCTION_SITES)
+        var construction_pending = construction_sites.length != 0
 
-        if (cur_controller.level == 1) {
+        console.log(`
+room balancer in ${room}
+control level ${cur_controller.level}
+container ${has_container}
+storage ${has_storage}
+construction pending ${construction_pending}
+`)
+        if (cur_controller.level >= 1) {
             cur_room.memory.spawn_limits.harvester = 2
             cur_room.memory.spawn_limits.upgrader = 2
+            if (construction_pending) {
+                cur_room.memory.spawn_limits.builder = 3
+            } else {
+                cur_room.memory.spawn_limits.builder = 0
+            }
         }
+
+
 
         if (cur_controller.level >= 4) {
             if (has_storage && storages[0].store.getUsedCapacity(RESOURCE_ENERGY) > 10000) {
