@@ -27,6 +27,11 @@ var room_balancer = {
             `room balancer in ${room} control level ${cur_controller.level} ${has_container} ${has_storage}`
         )
 
+        if (cur_controller.level == 1) {
+            cur_room.memory.spawn_limits.harvester = 2
+            cur_room.memory.spawn_limits.upgrader = 2
+        }
+
         if (cur_controller.level >= 4) {
             if (has_storage && storages[0].store.getUsedCapacity(RESOURCE_ENERGY) > 10000) {
                 cur_room.memory.switches.lvl4_filledstorage = true
