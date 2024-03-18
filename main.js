@@ -39,8 +39,8 @@ var role_map = {
 module.exports.loop = function () {
 
     for(var room in Game.rooms) {
-        room_balancer.run(room)
         spawner.run(room)
+        room_balancer.run(room)
         auto_buildings.run(room)
         towers.run(room)
     }
