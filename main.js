@@ -12,15 +12,13 @@ var roleHarvester = require('harvester');
 var roleUpgrader = require('upgrader');
 var roleBuilder = require('builder');
 var spawner = require('spawner');
-var tower = require('tower');
+var towers = require('towers');
 
 // WIP: also create construction sites automatically omfg
 var auto_buildings = require('auto_buildings');
 
 module.exports.loop = function () {
 
-    // XXX: will move into room loop
-    tower.run();
 
     for(var room in Game.rooms) {
         var cur_room = Game.rooms[room];
@@ -55,6 +53,7 @@ module.exports.loop = function () {
         }
         spawner.run(room);
         auto_buildings.run(room);
+        towers.run(room);
     }
 
     // XXX: what about this one?
