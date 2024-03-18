@@ -28,6 +28,7 @@ var spawner = {
             harvester: {
                 body: [WORK,CARRY,MOVE],
                 upgrade_tmpl: [WORK,MOVE],
+                vital: true,
                 memory: {
                     role: "harvester",
                     room: room,
@@ -36,6 +37,7 @@ var spawner = {
             lean_harvester: {
                 body: [WORK,MOVE],
                 upgrade_tmpl: [WORK],
+                vital: true,
                 memory: {
                     role: "lean_harvester",
                     room: room,
@@ -44,6 +46,7 @@ var spawner = {
             lean_logistics: {
                 body: [CARRY,MOVE],
                 upgrade_tmpl: [CARRY,MOVE],
+                vital: true,
                 memory: {
                     role: "lean_logistics",
                     room: room,
@@ -52,6 +55,7 @@ var spawner = {
             lean_upgrader: {
                 body: [WORK,CARRY,MOVE],
                 upgrade_tmpl: [WORK,CARRY,MOVE,MOVE],
+                vital: false,
                 memory: {
                     role: "lean_upgrader",
                     room: room,
@@ -60,6 +64,7 @@ var spawner = {
             lean_builder: {
                 body: [WORK,CARRY,MOVE],
                 upgrade_tmpl: [WORK,CARRY,MOVE,MOVE],
+                vital: false,
                 memory: {
                     role: "lean_builder",
                     room: room,
@@ -68,6 +73,7 @@ var spawner = {
             builder: {
                 body: [WORK,CARRY,MOVE],
                 upgrade_tmpl: [WORK,MOVE],
+                vital: false,
                 memory: {
                     role: "builder",
                     room: room,
@@ -76,6 +82,7 @@ var spawner = {
             upgrader: {
                 body: [WORK,CARRY,MOVE],
                 upgrade_tmpl: [WORK,MOVE],
+                vital: false,
                 memory: {
                     role: "upgrader",
                     room: room,
@@ -84,13 +91,33 @@ var spawner = {
         }
 
         // Upgrade calculator
-        // XXX: There should be some way to calculate wether we can afford waiting
+        // There should be some way to calculate wether we can afford waiting
         // for better creep or if we are in some kind of emergency mode, e.g. we
         // dont generate income as we have no harvesters/logistics
         for(var role in roles) {
             var role_settings = roles[role];
             var upgrade_tmpl = role_settings.upgrade_tmpl;
-            while (bodyCost(role_settings.body) < cur_room.energyAvailable - bodyCost(upgrade_tmpl)) {
+
+            // energyAvailable is our default energy limit trying to build
+            // creep as soon as possible
+            var energy_limit = cur_room.energyAvailable;
+
+            if (role_settings.vital) {
+                var creeps = _.filter(
+                    Game.creeps,
+                    (creep) => (
+                        (creep.memory.room == room) &&
+                        (creep.memory.role == role)
+                    )
+                )
+                // this might be too naive:
+                // maybe also consider ttl and pairs of lean harvesters and logistics
+                if (creeps.length) {
+                    energy_limit = cur_room.energyCapacityAvailable
+                }
+            }
+
+            while (bodyCost(role_settings.body) < energy_limit - bodyCost(upgrade_tmpl)) {
                 role_settings.body.push(...upgrade_tmpl);
             }
         }
