@@ -3,6 +3,10 @@ var leanLogistics = {
     /** @param {Creep} creep **/
     run: function(creep) {
 
+        if (creep.spawning) {
+            return
+        }
+
         var colleagues = _.filter(
             Game.creeps,
             (othercreep) => (
