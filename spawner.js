@@ -83,6 +83,10 @@ var spawner = {
             },
         }
 
+        // Upgrade calculator
+        // XXX: There should be some way to calculate wether we can afford waiting
+        // for better creep or if we are in some kind of emergency mode, e.g. we
+        // dont generate income as we have no harvesters/logistics
         for(var role in roles) {
             var role_settings = roles[role];
             var upgrade_tmpl = role_settings.upgrade_tmpl;
@@ -127,6 +131,8 @@ var spawner = {
                                 memory: role_settings.memory,
                             }
                         )
+                        // lean_harvester track which source they are mining, so we prepare
+                        // room and creep memory
                         if (role == 'lean_harvester') {
                             for(var source_index in cur_room.memory.sources) {
                                 var cur_source = cur_room.memory.sources[source_index];
