@@ -12,6 +12,34 @@ var spawner = {
         var cur_room = Game.rooms[room];
         const cur_spawn = cur_room.find(FIND_MY_SPAWNS)[0];
 
+        // Make sure each room has memory.sources
+        // and memory.spawn_limits set, both are needed
+        if (!cur_room.memory.sources) {
+            cur_room.memory = {
+                sources: {
+                    0: {
+                        cur: 0,
+                        limit: 2,
+                    },
+                    1: {
+                        cur: 0,
+                        limit: 2,
+                    },
+                }
+            }
+        }
+        if (!cur_room.memory.spawn_limits) {
+            cur_room.memory.spawn_limits = {
+                harvester: 0,
+                lean_harvester: 0,
+                upgrader: 0,
+                lean_upgrader: 0,
+                builder: 0,
+                lean_builder: 0,
+                lean_logistics: 0,
+            }
+        }
+
         for(var name in Memory.creeps) {
             if(!Game.creeps[name]) {
                 if (Memory.creeps[name].role == 'lean_harvester') {
