@@ -18,12 +18,21 @@ var leanUpgrader = {
             }
         }
         else {
-            var targets = creep.room.find(FIND_STRUCTURES, {
-                filter: (structure) => {
-                    return structure.structureType == STRUCTURE_CONTAINER &&
-                           structure.store.getUsedCapacity(RESOURCE_ENERGY) > 0;
-                }
-            });
+            if (creep.room.memory.switches.lvl4_filledstorage) {
+                var targets = creep.room.find(FIND_STRUCTURES, {
+                    filter: (structure) => {
+                        return structure.structureType == STRUCTURE_STORAGE &&
+                               structure.store.getUsedCapacity(RESOURCE_ENERGY) > 0;
+                    }
+                });
+            } else {
+                var targets = creep.room.find(FIND_STRUCTURES, {
+                    filter: (structure) => {
+                        return structure.structureType == STRUCTURE_CONTAINER &&
+                               structure.store.getUsedCapacity(RESOURCE_ENERGY) > 0;
+                    }
+                });
+            }
             if (targets.length) {
                 if(creep.withdraw(targets[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
                     creep.moveTo(targets[0], {visualizePathStyle: {stroke: '#ff0000'}});

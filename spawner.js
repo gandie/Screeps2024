@@ -24,7 +24,7 @@ var spawner = {
                 }
             }
             cur_room.memory.sources = new_sources
-            console.error(`Sources memory initialized for room ${room}`)
+            console.log(`Sources memory initialized for room ${room}`)
         }
         if (!cur_room.memory.spawn_limits) {
             cur_room.memory.spawn_limits = {
@@ -36,7 +36,7 @@ var spawner = {
                 lean_builder: 0,
                 lean_logistics: 0,
             }
-            console.error(`Spawn limit memory initialized for room ${room}`)
+            console.log(`Spawn limit memory initialized for room ${room}`)
         }
 
         for(var name in Memory.creeps) {
