@@ -15,16 +15,14 @@ var remote_miner = require('remote_miner')
 var roleHarvester = require('harvester')
 var roleUpgrader = require('upgrader')
 var roleBuilder = require('builder')
-var spawner = require('spawner')
 
-// buildings
+// room based stuff
 var towers = require('towers')
-
-// WIP: also create construction sites automatically omfg
 var auto_buildings = require('auto_buildings')
-
-// room_balancer
 var room_balancer = require('room_balancer')
+var spawner = require('spawner')
+var room_initializer = require('room_initializer')
+
 
 var role_map = {
     lean_harvester,
@@ -38,10 +36,13 @@ var role_map = {
 
 module.exports.loop = function () {
 
-    for(var room in Game.rooms) {
-        // XXX: There should be an initializer or something an we should
+    for(let room in Game.rooms) {
+        // WIP: There should be an initializer or something an we should
         // switch to calculating possible mining spots and assign them
         // via room memory. The spice must flow.
+
+        room_initializer.run(room)
+
         spawner.run(room)
         room_balancer.run(room)
         auto_buildings.run(room)

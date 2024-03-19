@@ -57,13 +57,9 @@ var auto_buildings = {
         var cur_room = Game.rooms[room]
         var cur_controller = cur_room.controller
         var spawn = cur_room.find(FIND_MY_SPAWNS)[0]
-        if (!cur_room.memory.build_tasks) {
-            cur_room.memory.build_tasks = {}
-        }
         
         var construction_sites = cur_room.find(FIND_CONSTRUCTION_SITES)
         var construction_pending = construction_sites.length != 0
-
 
         // level 1 buildings: roads to both sources
         if (cur_controller.level >= 1) {
