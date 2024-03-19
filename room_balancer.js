@@ -43,7 +43,9 @@ construction pending ${construction_pending}
             }
         }
 
-
+        if (cur_controller.level >= 3) {
+            // XXX: Check if we have a chest. If so, start spawning lean workers
+        }
 
         if (cur_controller.level >= 4) {
             if (has_storage && storages[0].store.getUsedCapacity(RESOURCE_ENERGY) > 10000) {

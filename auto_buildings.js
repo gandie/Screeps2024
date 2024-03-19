@@ -1,5 +1,58 @@
 var auto_buildings = {
 
+    clear_flags: function() {
+        var flags = cur_room.find(FIND_FLAGS)
+        for (let flag of flags) {
+            flag.remove()
+        }
+    },
+    build_road: function(room, from, to) {
+        let mypath = room.findPath(
+            from.pos,
+            to.pos,
+            {
+                ignoreCreeps: true,
+            }
+        )
+        mypath.splice(-1, 1)
+        for (let path_pos of mypath) {
+            let room_pos = room.getPositionAt(path_pos.x, path_pos.y)
+            room_pos.createConstructionSite(STRUCTURE_ROAD)
+        }
+    },
+    create_grid: function(pos, room) {
+        let ops = []
+        let combs = []
+
+        for (let dist = 2; dist < 5; dist = dist + 2) {
+            for (let mul = -1; mul < 2; mul++) {
+                ops.push(dist * mul)
+            }
+        }
+
+        for (let x of ops) {
+            for (let y of ops) {
+                let roompos = room.getPositionAt(
+                    pos.x + x,
+                    pos.y + y
+                )
+                if (room.lookForAt(LOOK_STRUCTURES, roompos).length) {
+                    continue
+                }
+                if (room.lookForAt(LOOK_CONSTRUCTION_SITES, roompos).length) {
+                    continue
+                }
+                combs.push(roompos)
+            }
+        }
+
+        combs.sort((a, b) => {
+            return pos.getRangeTo(a) - pos.getRangeTo(b)
+        })
+
+        return combs
+
+    },
     run: function(room) {
         var cur_room = Game.rooms[room]
         var cur_controller = cur_room.controller
@@ -7,88 +60,56 @@ var auto_buildings = {
         if (!cur_room.memory.build_tasks) {
             cur_room.memory.build_tasks = {}
         }
+        
+        var construction_sites = cur_room.find(FIND_CONSTRUCTION_SITES)
+        var construction_pending = construction_sites.length != 0
 
-        /* clearFlags debug function
-        var flags = cur_room.find(FIND_FLAGS)
-        for (i in flags) {
-            flags[i].remove()
-        }
-        */
 
         // level 1 buildings: roads to both sources
         if (cur_controller.level >= 1) {
             if (!cur_room.memory.build_tasks.road_first_source) {
-                // XXX: this can be wrapped to build-road function!
-                var first_source = cur_room.find(FIND_SOURCES)[0]
-                var mypath = cur_room.findPath(
-                    spawn.pos,
-                    first_source.pos,
-                    {
-                        ignoreCreeps: true,
-                    }
-                )
-                mypath.splice(-1, 1)                
-                for (var pos_idx in mypath) {
-                    var path_pos = mypath[pos_idx]
-                    var room_pos = cur_room.getPositionAt(path_pos.x, path_pos.y)
-                    room_pos.createConstructionSite(STRUCTURE_ROAD)
-                }
+                let first_source = cur_room.find(FIND_SOURCES)[0]
+                this.build_road(cur_room, spawn, first_source)
                 cur_room.memory.build_tasks.road_first_source = true
             }
-            if (!cur_room.memory.build_tasks.road_second_source) {
-                var second_source = cur_room.find(FIND_SOURCES)[1]
-                var mypath = cur_room.findPath(
-                    spawn.pos,
-                    second_source.pos,
-                    {
-                        ignoreCreeps: true,
-                    }
-                )
-                mypath.splice(-1, 1)
-                for (var pos_idx in mypath) {
-                    var path_pos = mypath[pos_idx]
-                    var room_pos = cur_room.getPositionAt(path_pos.x, path_pos.y)
-                    room_pos.createConstructionSite(STRUCTURE_ROAD)
-                }
+            if (!construction_pending && !cur_room.memory.build_tasks.road_second_source) {
+                let second_source = cur_room.find(FIND_SOURCES)[1]
+                this.build_road(cur_room, spawn, second_source)
                 cur_room.memory.build_tasks.road_second_source = true
             }
         }
         // level 2 buildings: 5 extensions! road to controller
         if (cur_controller.level >= 2) {
-            if (!cur_room.memory.build_tasks.lvl2_extensions) {
-                for (let x_coord = -2; x_coord < 3; x_coord = x_coord + 2) {
-                    for (let y_coord = -2; y_coord < 3; y_coord = y_coord + 2) {
-                        if (x_coord == 0 && y_coord == 0) {
-                            continue
-                        }
-                        var newpos = cur_room.getPositionAt(
-                            spawn.pos.x + x_coord,
-                            spawn.pos.y + y_coord
-                        )
-                        newpos.createConstructionSite(STRUCTURE_EXTENSION)
-                        console.log(newpos)
-                    }
+            if (!construction_pending && !cur_room.memory.build_tasks.lvl2_extensions) {
+                let grid = this.create_grid(spawn.pos, cur_room)
+                for (let pos of grid) {
+                    let res = pos.createConstructionSite(STRUCTURE_EXTENSION)
                 }
                 cur_room.memory.build_tasks.lvl2_extensions = true
             }
-            if (!cur_room.memory.build_tasks.lvl2_road_to_controller) {
-                var mypath = cur_room.findPath(
-                    spawn.pos,
-                    cur_controller.pos,
-                    {
-                        ignoreCreeps: true,
-                    }
-                )
-                mypath.splice(-1, 1)
-                for (var pos_idx in mypath) {
-                    var path_pos = mypath[pos_idx]
-                    var room_pos = cur_room.getPositionAt(path_pos.x, path_pos.y)
-                    room_pos.createConstructionSite(STRUCTURE_ROAD)
-                }
+            if (!construction_pending && !cur_room.memory.build_tasks.lvl2_road_to_controller) {
+                this.build_road(cur_room, spawn, cur_controller)
                 cur_room.memory.build_tasks.lvl2_road_to_controller = true
             }
         }
 
+        if (cur_controller.level >= 3) {
+            if (!construction_pending && !cur_room.memory.build_tasks.lvl3_extensions) {
+                let grid = this.create_grid(spawn.pos, cur_room)
+                for (let pos of grid) {
+                    let res = pos.createConstructionSite(STRUCTURE_EXTENSION)
+                }
+                cur_room.memory.build_tasks.lvl3_extensions = true
+            }
+
+            if (!construction_pending && !cur_room.memory.build_tasks.lvl3_tower) {
+                let grid = this.create_grid(spawn.pos, cur_room)
+                for (let pos of grid) {
+                    let res = pos.createConstructionSite(STRUCTURE_TOWER)
+                }
+                cur_room.memory.build_tasks.lvl3_tower = true
+            }
+        }
     }
 };
 
