@@ -45,6 +45,19 @@ construction pending ${construction_pending}
 
         if (cur_controller.level >= 3) {
             // XXX: Check if we have a chest. If so, start spawning lean workers
+            if (has_container) {
+                cur_room.memory.spawn_limits.harvester = 0
+                cur_room.memory.spawn_limits.upgrader = 0
+                cur_room.memory.spawn_limits.builder = 0
+
+                cur_room.memory.spawn_limits.lean_harvester = 2
+                cur_room.memory.spawn_limits.lean_logistics = 2
+                cur_room.memory.spawn_limits.lean_upgrader = 1
+                cur_room.memory.spawn_limits.lean_builder = 0
+            }
+            if (construction_pending && has_container) {
+                cur_room.memory.spawn_limits.lean_builder = 1
+            }
         }
 
         if (cur_controller.level >= 4) {

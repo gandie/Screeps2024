@@ -93,6 +93,7 @@ var auto_buildings = {
             }
         }
 
+        // another 5 extensions, tower
         if (cur_controller.level >= 3) {
             if (!construction_pending && !cur_room.memory.build_tasks.lvl3_extensions) {
                 let grid = this.create_grid(spawn.pos, cur_room)
