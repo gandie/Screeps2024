@@ -109,6 +109,16 @@ var auto_buildings = {
                 }
                 cur_room.memory.build_tasks.lvl3_tower = true
             }
+            if (!construction_pending && !cur_room.memory.build_tasks.lvl3_container) {
+                let grid = this.create_grid(spawn.pos, cur_room)
+                for (let pos of grid) {
+                    let res = pos.createConstructionSite(STRUCTURE_CONTAINER)
+                    if (res == 0) {
+                        break
+                    }
+                }
+                cur_room.memory.build_tasks.lvl3_container = true
+            }
         }
     }
 };
