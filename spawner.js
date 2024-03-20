@@ -14,10 +14,7 @@ var spawner = {
 
         for(var name in Memory.creeps) {
             if(!Game.creeps[name]) {
-                if ((Memory.creeps[name].role == 'lean_harvester') ||
-                    (Memory.creeps[name].role == 'harvester') ||
-                    (Memory.creeps[name].role == 'builder') ||
-                    (Memory.creeps[name].role == 'upgrader')) {
+                if ((Memory.creeps[name].use_mining_spot)) {
                     if (Memory.creeps[name].mining_spot_idx) {
                         Memory.rooms[Memory.creeps[name].room].mining_spots[Memory.creeps[name].mining_spot_idx].cur -= 1
                     }
@@ -34,6 +31,7 @@ var spawner = {
                 vital: true,
                 memory: {
                     role: "harvester",
+                    use_mining_spot: true,
                 },
             },
             lean_harvester: {
@@ -42,6 +40,7 @@ var spawner = {
                 vital: true,
                 memory: {
                     role: "lean_harvester",
+                    use_mining_spot: true,
                 },
             },
             lean_logistics: {
@@ -74,6 +73,7 @@ var spawner = {
                 vital: false,
                 memory: {
                     role: "builder",
+                    use_mining_spot: true,
                 },
             },
             upgrader: {
@@ -82,6 +82,7 @@ var spawner = {
                 vital: false,
                 memory: {
                     role: "upgrader",
+                    use_mining_spot: true,
                 },
             },
         }
@@ -150,12 +151,7 @@ var spawner = {
                             }
                         )
 
-                        if (
-                            (role == 'harvester') ||
-                            (role == 'lean_harvester') ||
-                            (role == 'upgrader') ||
-                            (role == 'builder')
-                            ) {
+                        if (role_settings.memory.use_mining_spot) {
                             for (let mining_spot_idx in cur_room.memory.mining_spots) {
                                 let mining_spot = cur_room.memory.mining_spots[mining_spot_idx]
                                 if (mining_spot.cur != 0) {
