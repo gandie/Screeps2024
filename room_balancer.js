@@ -21,10 +21,19 @@ var room_balancer = {
         var construction_pending = construction_sites.length != 0
 
         if (cur_controller.level >= 1) {
+            let mining_spots = cur_room.memory.mining_spots
+            let mining_spots_count = Object.keys(mining_spots).length
+
+            let harvester_count = Math.floor(mining_spots_count / 2)
+
             cur_room.memory.spawn_limits.harvester = 2
-            cur_room.memory.spawn_limits.upgrader = 2
+
+            let rem_count = mining_spots_count - harvester_count
+            let upgrader_count = Math.floor(rem_count / 2)
+
+            cur_room.memory.spawn_limits.upgrader = upgrader_count
             if (construction_pending) {
-                cur_room.memory.spawn_limits.builder = 3
+                cur_room.memory.spawn_limits.builder = upgrader_count
             } else {
                 cur_room.memory.spawn_limits.builder = 0
             }

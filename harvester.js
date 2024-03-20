@@ -3,7 +3,6 @@ var roleHarvester = {
     /** @param {Creep} creep **/
     run: function(creep) {
         if(creep.store.getFreeCapacity() > 0) {
-            creep.say("Harvesting...")
             let mining_spot = creep.room.memory.mining_spots[creep.memory.mining_spot_idx]
             let target = creep.room.getPositionAt(mining_spot.x, mining_spot.y)
             let source = Game.getObjectById(mining_spot.source_id)
@@ -12,7 +11,6 @@ var roleHarvester = {
             }
         }
         else {
-            creep.say("Back to base...")
             var targets = creep.room.find(FIND_STRUCTURES, {
                 filter: (structure) => {
                     return (structure.structureType == STRUCTURE_EXTENSION ||
