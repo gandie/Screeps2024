@@ -51,12 +51,6 @@ module.exports.loop = function () {
 
     for(var name in Game.creeps) {
         var creep = Game.creeps[name];
-        for (var role_name in role_map) {
-            var role_strat = role_map[role_name]
-            if (creep.memory.role == role_name) {
-                role_strat.run(creep)
-                break
-            }
-        }
+        role_map[creep.memory.role].run(creep)
     }
 }

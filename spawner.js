@@ -147,7 +147,7 @@ var spawner = {
                             break
                         }
                         if (!found) {
-                            return
+                            continue
                         }
                     }
 
