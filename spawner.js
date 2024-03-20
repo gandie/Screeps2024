@@ -133,6 +133,24 @@ var spawner = {
     
                     role_settings.memory['room'] = room
 
+                    if (role_settings.memory.use_mining_spot) {
+                        let found = false
+                        for (let mining_spot_idx in cur_room.memory.mining_spots) {
+                            let mining_spot = cur_room.memory.mining_spots[mining_spot_idx]
+                            if (mining_spot.cur != 0) {
+                                continue
+                            }
+                            found = true
+                            mining_spot.cur += 1
+                            role_settings.memory['mining_spot_idx'] = mining_spot_idx
+                            console.log("harvester found mining spot: " + mining_spot_idx)
+                            break
+                        }
+                        if (!found) {
+                            return
+                        }
+                    }
+
                     var canspawn = cur_spawn.spawnCreep(
                         role_settings.body,
                         newName,
@@ -150,19 +168,6 @@ var spawner = {
                                 memory: role_settings.memory,
                             }
                         )
-
-                        if (role_settings.memory.use_mining_spot) {
-                            for (let mining_spot_idx in cur_room.memory.mining_spots) {
-                                let mining_spot = cur_room.memory.mining_spots[mining_spot_idx]
-                                if (mining_spot.cur != 0) {
-                                    continue
-                                }
-                                mining_spot.cur += 1
-                                role_settings.memory['mining_spot_idx'] = mining_spot_idx
-                                console.log("harvester found mining spot: " + mining_spot_idx)
-                                break
-                            }
-                        }
                     }
                     return;
                 }
