@@ -76,16 +76,22 @@ var auto_buildings = {
         }
         // level 2 buildings: 5 extensions! road to controller
         if (cur_controller.level >= 2) {
+            if (!construction_pending && !cur_room.memory.build_tasks.lvl2_container) {
+                let grid = this.create_grid(spawn.pos, cur_room)
+                for (let pos of grid) {
+                    let res = pos.createConstructionSite(STRUCTURE_CONTAINER)
+                    if (res == 0) {
+                        break
+                    }
+                }
+                cur_room.memory.build_tasks.lvl2_container = true
+            }
             if (!construction_pending && !cur_room.memory.build_tasks.lvl2_extensions) {
                 let grid = this.create_grid(spawn.pos, cur_room)
                 for (let pos of grid) {
                     let res = pos.createConstructionSite(STRUCTURE_EXTENSION)
                 }
                 cur_room.memory.build_tasks.lvl2_extensions = true
-            }
-            if (!construction_pending && !cur_room.memory.build_tasks.lvl2_road_to_controller) {
-                this.build_road(cur_room, spawn, cur_controller)
-                cur_room.memory.build_tasks.lvl2_road_to_controller = true
             }
         }
 
@@ -106,16 +112,13 @@ var auto_buildings = {
                 }
                 cur_room.memory.build_tasks.lvl3_tower = true
             }
-            if (!construction_pending && !cur_room.memory.build_tasks.lvl3_container) {
-                let grid = this.create_grid(spawn.pos, cur_room)
-                for (let pos of grid) {
-                    let res = pos.createConstructionSite(STRUCTURE_CONTAINER)
-                    if (res == 0) {
-                        break
-                    }
-                }
-                cur_room.memory.build_tasks.lvl3_container = true
+
+
+            if (!construction_pending && !cur_room.memory.build_tasks.lvl3_road_to_controller) {
+                this.build_road(cur_room, spawn, cur_controller)
+                cur_room.memory.build_tasks.lvl3_road_to_controller = true
             }
+
         }
     }
 };

@@ -127,13 +127,6 @@ var spawner = {
                 );
                 var role_limit = cur_room.memory.spawn_limits[role];
 
-                // limit override for builder: dont spawn if nothing to build
-                if (role == 'builder' || role == 'lean_builder') {
-                    if (!cur_room.find(FIND_CONSTRUCTION_SITES).length) {
-                        role_limit = 0;
-                    }
-                }
-
                 if (role_creeps.length < role_limit) {
                     var newName = role + Game.time;
     

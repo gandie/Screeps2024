@@ -51,22 +51,6 @@ let room_initializer = {
             cur_room.memory.build_tasks = {}
         }
 
-        // XXX: Improve this!
-        // Make sure each room has memory.sources
-        // and memory.spawn_limits set, both are needed
-        if (!cur_room.memory.sources) {
-            let sources = cur_room.find(FIND_SOURCES)
-            var new_sources = {}
-            for (var source_idx in sources) {
-                new_sources[source_idx] = {
-                    cur: 0,
-                    limit: 2,
-                }
-            }
-            cur_room.memory.sources = new_sources
-            console.log(`Sources memory initialized for room ${room}`)
-        }
-
         if (!cur_room.memory.spawn_limits) {
             cur_room.memory.spawn_limits = {
                 harvester: 0,
