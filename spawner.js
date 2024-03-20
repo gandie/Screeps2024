@@ -12,33 +12,6 @@ var spawner = {
         var cur_room = Game.rooms[room];
         const cur_spawn = cur_room.find(FIND_MY_SPAWNS)[0];
 
-        // Make sure each room has memory.sources
-        // and memory.spawn_limits set, both are needed
-        if (!cur_room.memory.sources) {
-            var sources = cur_room.find(FIND_SOURCES)
-            var new_sources = {}
-            for (var source_idx in sources) {
-                new_sources[source_idx] = {
-                    cur: 0,
-                    limit: 2,
-                }
-            }
-            cur_room.memory.sources = new_sources
-            console.log(`Sources memory initialized for room ${room}`)
-        }
-        if (!cur_room.memory.spawn_limits) {
-            cur_room.memory.spawn_limits = {
-                harvester: 0,
-                lean_harvester: 0,
-                upgrader: 0,
-                lean_upgrader: 0,
-                builder: 0,
-                lean_builder: 0,
-                lean_logistics: 0,
-            }
-            console.log(`Spawn limit memory initialized for room ${room}`)
-        }
-
         for(var name in Memory.creeps) {
             if(!Game.creeps[name]) {
                 if (Memory.creeps[name].role == 'lean_harvester') {
@@ -191,6 +164,18 @@ var spawner = {
                                     console.log("lean_harvester found source: " + source_index)
                                     break;
                                 }
+                            }
+                        }
+                        if (role == 'harvester') {
+                            for (let mining_spot_idx in cur_room.memory.mining_spots) {
+                                let mining_spot = cur_room.memory.mining_spots[mining_spot_idx]
+                                if (mining_spot.cur != 0) {
+                                    continue
+                                }
+                                mining_spot.cur += 1
+                                role_settings.memory['mining_spot_idx'] = mining_spot_idx
+                                console.log("harvester found mining spot: " + mining_spot_idx)
+                                break
                             }
                         }
                     }

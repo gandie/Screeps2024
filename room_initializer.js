@@ -16,6 +16,7 @@ let room_initializer = {
                 if (!source.pos.isNearTo(pos)) {
                     continue
                 }
+                pos.source_id = source.id
                 neighbours.push(pos)
             }
         }
@@ -25,6 +26,7 @@ let room_initializer = {
             if (neighbour.lookFor(LOOK_TERRAIN) != 'plain') {
                 continue
             }
+            neighbour.cur = 0
             mining_spots.push(neighbour)
         }
         return mining_spots
