@@ -14,9 +14,9 @@ var spawner = {
 
         for(var name in Memory.creeps) {
             if(!Game.creeps[name]) {
-                if (Memory.creeps[name].role == 'lean_harvester') {
-                    if (Memory.creeps[name].source) {
-                        Memory.rooms[Memory.creeps[name].room].sources[Memory.creeps[name].source].cur -= 1;
+                if (Memory.creeps[name].role == 'lean_harvester' || Memory.creeps[name].role == 'harvester') {
+                    if (Memory.creeps[name].mining_spot_idx) {
+                        Memory.rooms[Memory.creeps[name].room].mining_spots[Memory.creeps[name].mining_spot_idx].cur -= 1
                     }
                 }
                 delete Memory.creeps[name];
@@ -153,20 +153,8 @@ var spawner = {
                                 memory: role_settings.memory,
                             }
                         )
-                        // lean_harvester track which source they are mining, so we prepare
-                        // room and creep memory
-                        if (role == 'lean_harvester') {
-                            for(var source_index in cur_room.memory.sources) {
-                                var cur_source = cur_room.memory.sources[source_index];
-                                if (cur_source.cur < cur_source.limit) {
-                                    cur_source.cur += 1;
-                                    role_settings.memory['source'] = source_index;
-                                    console.log("lean_harvester found source: " + source_index)
-                                    break;
-                                }
-                            }
-                        }
-                        if (role == 'harvester') {
+
+                        if (role == 'harvester' || role == 'lean_harvester') {
                             for (let mining_spot_idx in cur_room.memory.mining_spots) {
                                 let mining_spot = cur_room.memory.mining_spots[mining_spot_idx]
                                 if (mining_spot.cur != 0) {

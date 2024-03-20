@@ -2,10 +2,14 @@ var leanHarvester = {
 
     /** @param {Creep} creep **/
     run: function(creep) {
-        var my_source = creep.room.find(FIND_SOURCES)[creep.memory.source];
-        if(creep.harvest(my_source) != 0) {
-            creep.moveTo(my_source, {visualizePathStyle: {stroke: '#00ff00'}});
+
+        let mining_spot = creep.room.memory.mining_spots[creep.memory.mining_spot_idx]
+        let target = creep.room.getPositionAt(mining_spot.x, mining_spot.y)
+        let source = Game.getObjectById(mining_spot.source_id)
+        if(creep.harvest(source) == ERR_NOT_IN_RANGE) {
+            creep.moveTo(target, {visualizePathStyle: {stroke: '#00ff00'}});
         }
+
     }
 };
 
