@@ -24,8 +24,10 @@ var roleBuilder = {
             let mining_spot = creep.room.memory.mining_spots[creep.memory.mining_spot_idx]
             let target = creep.room.getPositionAt(mining_spot.x, mining_spot.y)
             let source = Game.getObjectById(mining_spot.source_id)
-            if(creep.harvest(source) == ERR_NOT_IN_RANGE) {
+            if (!creep.pos.isEqualTo(target)) {
                 creep.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}});
+            } else {
+                creep.harvest(source)
             }
         }
     }

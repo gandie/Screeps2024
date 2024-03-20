@@ -26,7 +26,7 @@ var room_balancer = {
 
             let harvester_count = Math.floor(mining_spots_count / 2)
 
-            cur_room.memory.spawn_limits.harvester = 2
+            cur_room.memory.spawn_limits.harvester = harvester_count
 
             let rem_count = mining_spots_count - harvester_count
             let upgrader_count = Math.floor(rem_count / 2)
