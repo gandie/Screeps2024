@@ -8,7 +8,7 @@ function bodyCost(body)
 
 var spawner = {
 
-    find_mining_slot: function(cur_room) {
+    find_mining_slot: function(cur_room, role) {
         let sources = cur_room.find(FIND_SOURCES)
         let free_spots = []
 
@@ -177,13 +177,13 @@ var spawner = {
                     }
                 )
                 if ((canspawn == 0) && (role_settings.memory.use_mining_spot)) {
-                    let res = this.find_mining_slot(cur_room)
+                    let res = this.find_mining_slot(cur_room, role)
                     if (!res) {
                         canspawn = 1
                     } else {
                         res.spot.cur += 1
                         role_settings.memory['mining_spot_idx'] = res.mining_spot_idx
-                        console.log(`Mining spot assigned ${mining_spot_idx}`)
+                        console.log(`Mining spot assigned ${res.mining_spot_idx}`)
                     }
                 }
 
