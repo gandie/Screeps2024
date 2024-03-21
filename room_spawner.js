@@ -46,9 +46,7 @@ var spawner = {
         for(var name in Memory.creeps) {
             if(!Game.creeps[name]) {
                 if ((Memory.creeps[name].use_mining_spot)) {
-                    if (Memory.creeps[name].mining_spot_idx) {
-                        Memory.rooms[Memory.creeps[name].room].mining_spots[Memory.creeps[name].mining_spot_idx].cur -= 1
-                    }
+                    Memory.rooms[Memory.creeps[name].room].mining_spots[Memory.creeps[name].mining_spot_idx].cur -= 1
                 }
                 delete Memory.creeps[name];
                 console.log('Clearing non-existing creep memory:', name);

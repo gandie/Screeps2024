@@ -20,7 +20,7 @@ var roleBuilder = require('builder')
 var towers = require('towers')
 var auto_buildings = require('auto_buildings')
 var room_balancer = require('room_balancer')
-var spawner = require('spawner')
+var room_spawner = require('room_spawner')
 var room_initializer = require('room_initializer')
 
 
@@ -43,7 +43,7 @@ module.exports.loop = function () {
 
         room_initializer.run(room)
 
-        spawner.run(room)
+        room_spawner.run(room)
         room_balancer.run(room)
         auto_buildings.run(room)
         towers.run(room)
