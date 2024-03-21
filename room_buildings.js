@@ -1,5 +1,14 @@
 var auto_buildings = {
 
+    build_on_grid: function(opts) {
+        let grid = this.create_grid(opts.spawn.pos, opts.cur_room)
+        for (let pos of grid) {
+            let res = pos.createConstructionSite(opts.building_type)
+            if ((opts.once) && (res == 0)) {
+                break
+            }
+        }
+    },
     clear_flags: function() {
         var flags = cur_room.find(FIND_FLAGS)
         for (let flag of flags) {
@@ -68,20 +77,20 @@ var auto_buildings = {
         // level 2 buildings: 5 extensions! road to controller
         if (cur_controller.level >= 2) {
             if (!construction_pending && !cur_room.memory.build_tasks.lvl2_container) {
-                let grid = this.create_grid(spawn.pos, cur_room)
-                for (let pos of grid) {
-                    let res = pos.createConstructionSite(STRUCTURE_CONTAINER)
-                    if (res == 0) {
-                        break
-                    }
-                }
+                this.build_on_grid({
+                    cur_room,
+                    spawn,
+                    building_type: STRUCTURE_CONTAINER,
+                    once: true
+                })
                 cur_room.memory.build_tasks.lvl2_container = true
             }
             if (!construction_pending && !cur_room.memory.build_tasks.lvl2_extensions) {
-                let grid = this.create_grid(spawn.pos, cur_room)
-                for (let pos of grid) {
-                    pos.createConstructionSite(STRUCTURE_EXTENSION)
-                }
+                this.build_on_grid({
+                    cur_room,
+                    spawn,
+                    building_type: STRUCTURE_EXTENSION,
+                })
                 cur_room.memory.build_tasks.lvl2_extensions = true
             }
 
@@ -101,18 +110,21 @@ var auto_buildings = {
         // another 5 extensions, tower
         if (cur_controller.level >= 3) {
             if (!construction_pending && !cur_room.memory.build_tasks.lvl3_extensions) {
-                let grid = this.create_grid(spawn.pos, cur_room)
-                for (let pos of grid) {
-                    pos.createConstructionSite(STRUCTURE_EXTENSION)
-                }
+                this.build_on_grid({
+                    cur_room,
+                    spawn,
+                    building_type: STRUCTURE_EXTENSION,
+                })
                 cur_room.memory.build_tasks.lvl3_extensions = true
             }
 
             if (!construction_pending && !cur_room.memory.build_tasks.lvl3_tower) {
-                let grid = this.create_grid(spawn.pos, cur_room)
-                for (let pos of grid) {
-                    pos.createConstructionSite(STRUCTURE_TOWER)
-                }
+                this.build_on_grid({
+                    cur_room,
+                    spawn,
+                    building_type: STRUCTURE_TOWER,
+                    once: true
+                })
                 cur_room.memory.build_tasks.lvl3_tower = true
             }
 
@@ -126,20 +138,20 @@ var auto_buildings = {
 
         if (cur_controller.level >= 4) {
             if (!construction_pending && !cur_room.memory.build_tasks.lvl4_storage) {
-                let grid = this.create_grid(spawn.pos, cur_room)
-                for (let pos of grid) {
-                    let res = pos.createConstructionSite(STRUCTURE_STORAGE)
-                    if (res == 0) {
-                        break
-                    }
-                }
+                this.build_on_grid({
+                    cur_room,
+                    spawn,
+                    building_type: STRUCTURE_STORAGE,
+                    once: true
+                })
                 cur_room.memory.build_tasks.lvl4_storage = true
             }
             if (!construction_pending && !cur_room.memory.build_tasks.lvl4_extensions) {
-                let grid = this.create_grid(spawn.pos, cur_room)
-                for (let pos of grid) {
-                    pos.createConstructionSite(STRUCTURE_EXTENSION)
-                }
+                this.build_on_grid({
+                    cur_room,
+                    spawn,
+                    building_type: STRUCTURE_EXTENSION,
+                })
                 cur_room.memory.build_tasks.lvl4_extensions = true
             }
         }
