@@ -196,6 +196,7 @@ var spawner = {
                             memory: role_settings.memory,
                         }
                     )
+                    return
                 }
             }
         }
