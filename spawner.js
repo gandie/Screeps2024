@@ -134,21 +134,34 @@ var spawner = {
                     role_settings.memory['room'] = room
 
                     if (role_settings.memory.use_mining_spot) {
-                        let found = false
-                        for (let mining_spot_idx in cur_room.memory.mining_spots) {
-                            let mining_spot = cur_room.memory.mining_spots[mining_spot_idx]
-                            if (mining_spot.cur != 0) {
-                                continue
-                            }
-                            found = true
-                            mining_spot.cur += 1
-                            role_settings.memory['mining_spot_idx'] = mining_spot_idx
-                            console.log("harvester found mining spot: " + mining_spot_idx)
-                            break
+                        let sources = cur_room.find(FIND_SOURCES)
+                        let free_spots = []
+
+                        for (let source of sources) {
+                            free_spots.push(
+                                _.filter(
+                                    cur_room.memory.mining_spots,
+                                    (spot) => (spot.cur == 0) && (spot.source_id == source.id)
+                                )
+                            )
                         }
-                        if (!found) {
+
+                        // pick the longest spot list
+                        let spots_to_use = free_spots.reduce(
+                            (prev, curr) => prev.length > curr.length ? prev : curr
+                        )
+
+                        if (!spots_to_use.length) {
+                            console.log("No spots available for role: " + role)
                             continue
                         }
+
+                        let spot = spots_to_use[0]
+                        let mining_spot_idx = cur_room.memory.mining_spots.indexOf(spot)
+                        spot.cur += 1
+                        role_settings.memory['mining_spot_idx'] = mining_spot_idx
+                        console.log(`Mining spot assigned ${mining_spot_idx}`)
+
                     }
 
                     var canspawn = cur_spawn.spawnCreep(
