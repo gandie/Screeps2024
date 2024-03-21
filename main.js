@@ -18,7 +18,7 @@ var roleBuilder = require('builder')
 
 // room based stuff
 var towers = require('towers')
-var auto_buildings = require('auto_buildings')
+var room_buildings = require('room_buildings')
 var room_balancer = require('room_balancer')
 var room_spawner = require('room_spawner')
 var room_initializer = require('room_initializer')
@@ -37,15 +37,10 @@ var role_map = {
 module.exports.loop = function () {
 
     for(let room in Game.rooms) {
-        // WIP: There should be an initializer or something an we should
-        // switch to calculating possible mining spots and assign them
-        // via room memory. The spice must flow.
-
         room_initializer.run(room)
-
         room_spawner.run(room)
         room_balancer.run(room)
-        auto_buildings.run(room)
+        room_buildings.run(room)
         towers.run(room)
     }
 
