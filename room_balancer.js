@@ -1,4 +1,25 @@
 var room_balancer = {
+
+    update_spawn_limits: function(cur_room) {
+        let sources = cur_room.find(FIND_SOURCES)
+        let lean_harvesters = _.filter(
+            Game.creeps,
+            (creep) => (creep.memory.role == "lean_harvester") && (creep.room == cur_room)
+        )
+        weakest_harvester = lean_harvesters.reduce(
+            (prev, cur) => cur.body.length < prev.body.length ? cur : prev
+        )
+        // 1500 game ticks time to live per creep
+        // 3000 energy per 300 game ticks per source
+        let work_parts = weakest_harvester.body.length - 1
+        let harvesters_needed = 1 + Math.ceil(
+            (3000 * sources.length) /
+            (work_parts * HARVEST_POWER * 300)
+        )
+
+        cur_room.memory.spawn_limits.lean_harvester = harvesters_needed
+
+    },
     run: function(room) {
         var cur_room = Game.rooms[room]
         var cur_controller = cur_room.controller
@@ -48,9 +69,10 @@ var room_balancer = {
 
                 cur_room.memory.spawn_limits.lean_harvester = mining_spots_count
                 cur_room.memory.spawn_limits.lean_logistics = 4
-                cur_room.memory.spawn_limits.lean_upgrader = 4
+                cur_room.memory.spawn_limits.lean_upgrader = 6
                 cur_room.memory.spawn_limits.lean_builder = 0
 
+                this.update_spawn_limits(cur_room)
             }
             if (construction_pending && has_container) {
                 cur_room.memory.spawn_limits.lean_builder = 3

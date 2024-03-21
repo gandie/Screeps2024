@@ -61,19 +61,10 @@ var auto_buildings = {
         var construction_sites = cur_room.find(FIND_CONSTRUCTION_SITES)
         var construction_pending = construction_sites.length != 0
 
-        // level 1 buildings: roads to both sources
+        // level 1 buildings:
         if (cur_controller.level >= 1) {
-            if (!cur_room.memory.build_tasks.road_first_source) {
-                let first_source = cur_room.find(FIND_SOURCES)[0]
-                this.build_road(cur_room, spawn, first_source)
-                cur_room.memory.build_tasks.road_first_source = true
-            }
-            if (!construction_pending && !cur_room.memory.build_tasks.road_second_source) {
-                let second_source = cur_room.find(FIND_SOURCES)[1]
-                this.build_road(cur_room, spawn, second_source)
-                cur_room.memory.build_tasks.road_second_source = true
-            }
         }
+
         // level 2 buildings: 5 extensions! road to controller
         if (cur_controller.level >= 2) {
             if (!construction_pending && !cur_room.memory.build_tasks.lvl2_container) {
@@ -92,6 +83,18 @@ var auto_buildings = {
                     let res = pos.createConstructionSite(STRUCTURE_EXTENSION)
                 }
                 cur_room.memory.build_tasks.lvl2_extensions = true
+            }
+
+            if (!construction_pending && !cur_room.memory.build_tasks.lvl2_road_first_source) {
+                let first_source = cur_room.find(FIND_SOURCES)[0]
+                this.build_road(cur_room, spawn, first_source)
+                cur_room.memory.build_tasks.lvl2_road_first_source = true
+            }
+
+            if (!construction_pending && !cur_room.memory.build_tasks.lvl2_road_second_source) {
+                let second_source = cur_room.find(FIND_SOURCES)[1]
+                this.build_road(cur_room, spawn, second_source)
+                cur_room.memory.build_tasks.lvl2_road_second_source = true
             }
         }
 
