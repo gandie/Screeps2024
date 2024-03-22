@@ -15,13 +15,13 @@ var room_balancer = {
         )
         return work_parts
     },
-    upgrade_bodies: function(base_config, cur_room) {
+    upgrade_bodies: function(cur_room) {
         // Upgrade calculator
         // There should be some way to calculate wether we can afford waiting
         // for better creep or if we are in some kind of emergency mode, e.g. we
         // dont generate income as we have no harvesters/logistics
-        for(var role in base_config) {
-            var role_settings = base_config[role];
+        for(var role in cur_room.memory.spawn_cfg) {
+            var role_settings = cur_room.memory.spawn_cfg[role];
             var upgrade_tmpl = role_settings.upgrade_tmpl;
 
             // energyAvailable is our default energy limit trying to build
@@ -53,7 +53,6 @@ var room_balancer = {
                 role_settings.body.push(...upgrade_tmpl)
             }
         }
-        return base_config
     },
     update_spawn_limits: function(cur_room) {
         let sources = cur_room.find(FIND_SOURCES)
@@ -61,12 +60,17 @@ var room_balancer = {
             Game.creeps,
             (creep) => (creep.memory.role == "lean_harvester") && (creep.room == cur_room)
         )
-        weakest_harvester = lean_harvesters.reduce(
-            (prev, cur) => cur.body.length < prev.body.length ? cur : prev
-        )
+        let work_parts
+        if (lean_harvesters.length > 0) {
+            weakest_harvester = lean_harvesters.reduce(
+                (prev, cur) => cur.body.length < prev.body.length ? cur : prev
+            )
+            work_parts = weakest_harvester.body.length - 1
+        } else {
+            work_parts = 1
+        }
         // 1500 game ticks time to live per creep
         // 3000 energy per 300 game ticks per source
-        let work_parts = weakest_harvester.body.length - 1
         let harvesters_needed = Math.ceil(
             (3000 * sources.length) /
             (work_parts * HARVEST_POWER * 300)
@@ -75,10 +79,10 @@ var room_balancer = {
         cur_room.memory.spawn_limits.lean_harvester = harvesters_needed
 
     },
-    run: function(room, spawn_cfg) {
+    run: function(room) {
         var cur_room = Game.rooms[room]
         var cur_controller = cur_room.controller
-        spawn_cfg = this.upgrade_bodies(spawn_cfg, cur_room)
+        this.upgrade_bodies(cur_room)
         var containers = cur_room.find(FIND_STRUCTURES, {
             filter: (structure) => {
                 return (structure.structureType == STRUCTURE_CONTAINER)
@@ -144,7 +148,6 @@ var room_balancer = {
             }
         }
 
-        return spawn_cfg
     }
 }
 

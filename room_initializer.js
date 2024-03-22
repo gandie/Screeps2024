@@ -64,6 +64,75 @@ let room_initializer = {
             console.log(`Spawn limit memory initialized for room ${room}`)
         }
 
+        cur_room.memory.spawn_cfg = {
+            harvester: {
+                body: [WORK,CARRY,MOVE],
+                upgrade_tmpl: [WORK,MOVE],
+                vital: true,
+                memory: {
+                    role: "harvester",
+                    use_mining_spot: true,
+                },
+                limit: 0,
+            },
+            lean_harvester: {
+                body: [WORK,MOVE],
+                upgrade_tmpl: [WORK],
+                vital: true,
+                memory: {
+                    role: "lean_harvester",
+                    use_mining_spot: true,
+                },
+                limit: 0,
+            },
+            lean_logistics: {
+                body: [CARRY,MOVE],
+                upgrade_tmpl: [CARRY,MOVE],
+                vital: true,
+                memory: {
+                    role: "lean_logistics",
+                },
+                limit: 0,
+            },
+            lean_upgrader: {
+                body: [WORK,CARRY,MOVE],
+                upgrade_tmpl: [WORK,CARRY,MOVE,MOVE],
+                vital: false,
+                memory: {
+                    role: "lean_upgrader",
+                },
+                limit: 0,
+            },
+            lean_builder: {
+                body: [WORK,CARRY,MOVE],
+                upgrade_tmpl: [WORK,CARRY,MOVE,MOVE],
+                vital: false,
+                memory: {
+                    role: "lean_builder",
+                },
+                limit: 0,
+            },
+            builder: {
+                body: [WORK,CARRY,MOVE],
+                upgrade_tmpl: [WORK,MOVE],
+                vital: false,
+                memory: {
+                    role: "builder",
+                    use_mining_spot: true,
+                },
+                limit: 0,
+            },
+            upgrader: {
+                body: [WORK,CARRY,MOVE],
+                upgrade_tmpl: [WORK,MOVE],
+                vital: false,
+                memory: {
+                    role: "upgrader",
+                    use_mining_spot: true,
+                },
+                limit: 0,
+            }
+        }
 
     }
 }

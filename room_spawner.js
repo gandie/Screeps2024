@@ -1,69 +1,4 @@
 var spawner = {
-    base_config: function() {
-        let cfg = {
-            harvester: {
-                body: [WORK,CARRY,MOVE],
-                upgrade_tmpl: [WORK,MOVE],
-                vital: true,
-                memory: {
-                    role: "harvester",
-                    use_mining_spot: true,
-                },
-            },
-            lean_harvester: {
-                body: [WORK,MOVE],
-                upgrade_tmpl: [WORK],
-                vital: true,
-                memory: {
-                    role: "lean_harvester",
-                    use_mining_spot: true,
-                },
-            },
-            lean_logistics: {
-                body: [CARRY,MOVE],
-                upgrade_tmpl: [CARRY,MOVE],
-                vital: true,
-                memory: {
-                    role: "lean_logistics",
-                },
-            },
-            lean_upgrader: {
-                body: [WORK,CARRY,MOVE],
-                upgrade_tmpl: [WORK,CARRY,MOVE,MOVE],
-                vital: false,
-                memory: {
-                    role: "lean_upgrader",
-                },
-            },
-            lean_builder: {
-                body: [WORK,CARRY,MOVE],
-                upgrade_tmpl: [WORK,CARRY,MOVE,MOVE],
-                vital: false,
-                memory: {
-                    role: "lean_builder",
-                },
-            },
-            builder: {
-                body: [WORK,CARRY,MOVE],
-                upgrade_tmpl: [WORK,MOVE],
-                vital: false,
-                memory: {
-                    role: "builder",
-                    use_mining_spot: true,
-                },
-            },
-            upgrader: {
-                body: [WORK,CARRY,MOVE],
-                upgrade_tmpl: [WORK,MOVE],
-                vital: false,
-                memory: {
-                    role: "upgrader",
-                    use_mining_spot: true,
-                },
-            }
-        }
-        return cfg
-    },
     find_mining_slot: function(cur_room, role) {
         let sources = cur_room.find(FIND_SOURCES)
         let free_spots = []
@@ -93,7 +28,7 @@ var spawner = {
         return {mining_spot_idx: mining_spot_idx, spot: spot}
 
     },
-    run: function(room, spawn_cfg) {
+    run: function(room) {
         var cur_room = Game.rooms[room]
         const cur_spawn = cur_room.find(FIND_MY_SPAWNS)[0]
         for(var name in Memory.creeps) {
@@ -106,13 +41,13 @@ var spawner = {
             }
         }
 
-        for(var role in spawn_cfg) {
+        for(var role in cur_room.memory.spawn_cfg) {
 
             if (cur_spawn.spawning) {
                 break
             }
 
-            var role_settings = spawn_cfg[role];
+            var role_settings = cur_room.memory.spawn_cfg[role];
             var role_creeps =  _.filter(
                 Game.creeps,
                 (creep) => (creep.memory.role == role) && (creep.memory.room == room)

@@ -37,12 +37,9 @@ var role_map = {
 module.exports.loop = function () {
 
     for(let room in Game.rooms) {
-
-        let spawn_cfg = room_spawner.base_config()
-
         room_initializer.run(room)
-        spawn_cfg = room_balancer.run(room, spawn_cfg)
-        room_spawner.run(room, spawn_cfg)
+        room_balancer.run(room)
+        room_spawner.run(room)
         room_buildings.run(room)
         towers.run(room)
     }
