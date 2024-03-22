@@ -80,7 +80,7 @@ var room_balancer = {
         }
 
         if (cur_controller.level >= 4) {
-            if (has_storage && storages[0].store.getUsedCapacity(RESOURCE_ENERGY) > 10000) {
+            if (has_storage && storages[0].store.getUsedCapacity(RESOURCE_ENERGY) > 100000) {
                 cur_room.memory.switches.lvl4_filledstorage = true
                 cur_room.memory.spawn_limits.lean_upgrader = 8
             } else {

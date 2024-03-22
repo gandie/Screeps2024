@@ -33,7 +33,7 @@ var auto_buildings = {
         let ops = []
         let combs = []
 
-        for (let dist = 2; dist < 5; dist = dist + 2) {
+        for (let dist = 2; dist < 9; dist = dist + 2) {
             for (let mul = -1; mul < 2; mul++) {
                 ops.push(dist * mul)
             }
@@ -153,6 +153,17 @@ var auto_buildings = {
                     building_type: STRUCTURE_EXTENSION,
                 })
                 cur_room.memory.build_tasks.lvl4_extensions = true
+            }
+        }
+
+        if (cur_controller.level >= 5) {
+            if (!construction_pending && !cur_room.memory.build_tasks.lvl5_extensions) {
+                this.build_on_grid({
+                    cur_room,
+                    spawn,
+                    building_type: STRUCTURE_EXTENSION,
+                })
+                cur_room.memory.build_tasks.lvl5_extensions = true
             }
         }
     }
