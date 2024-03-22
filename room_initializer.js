@@ -32,7 +32,7 @@ let room_initializer = {
         return mining_spots
     },
 
-    run: function(room) {
+    run: function(room, role_map) {
         let cur_room = Game.rooms[room]
         // global switches used by several modules
 
@@ -64,7 +64,8 @@ let room_initializer = {
             console.log(`Spawn limit memory initialized for room ${room}`)
         }
 
-        cur_room.memory.spawn_cfg = {
+
+        let spawn_cfg = {
             harvester: {
                 body: [WORK,CARRY,MOVE],
                 upgrade_tmpl: [WORK,MOVE],
@@ -133,7 +134,11 @@ let room_initializer = {
                 limit: 0,
             }
         }
-
+        cur_room.memory.spawn_cfg = spawn_cfg
+        // XXX: for now we use this hack to get a CLONE of the spawn_cfg
+        Object.entries(JSON.parse(JSON.stringify(spawn_cfg))).map(
+            (entry) => role_map[entry[0]]['cfg'] = entry[1]// console.log(, entry[1])
+        )
     }
 }
 

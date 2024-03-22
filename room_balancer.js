@@ -79,9 +79,12 @@ var room_balancer = {
         cur_room.memory.spawn_limits.lean_harvester = harvesters_needed
 
     },
-    run: function(room) {
+    run: function(room, role_map) {
         var cur_room = Game.rooms[room]
         var cur_controller = cur_room.controller
+        Object.values(role_map).forEach(
+            item => item.cfg.body.push(...item.cfg.upgrade_tmpl)
+        )
         this.upgrade_bodies(cur_room)
         var containers = cur_room.find(FIND_STRUCTURES, {
             filter: (structure) => {

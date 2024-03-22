@@ -37,8 +37,8 @@ var role_map = {
 module.exports.loop = function () {
 
     for(let room in Game.rooms) {
-        room_initializer.run(room)
-        room_balancer.run(room)
+        room_initializer.run(room, role_map)
+        room_balancer.run(room, role_map)
         room_spawner.run(room)
         room_buildings.run(room)
         towers.run(room)
