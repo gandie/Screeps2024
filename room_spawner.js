@@ -37,12 +37,19 @@ var spawner = {
         return {mining_spot_idx: mining_spot_idx, spot: spot}
 
     },
-
+    calc_upper_work_limit: function() {
+        // 1500 game ticks time to live per creep
+        // 3000 energy per 300 game ticks per source
+        let work_parts = 1 + Math.ceil(
+            (3000) /
+            (300 * HARVEST_POWER)
+        )
+        return work_parts
+    },
     run: function(room) {
 
-        var cur_room = Game.rooms[room];
-        const cur_spawn = cur_room.find(FIND_MY_SPAWNS)[0];
-
+        var cur_room = Game.rooms[room]
+        const cur_spawn = cur_room.find(FIND_MY_SPAWNS)[0]
         for(var name in Memory.creeps) {
             if(!Game.creeps[name]) {
                 if ((Memory.creeps[name].use_mining_spot)) {
@@ -116,6 +123,9 @@ var spawner = {
             },
         }
 
+        // XXX: This guy needs an upgrade: We need upper limits on body costs,
+        // because with growing extensions we dont want to spend too much
+        // energy on upgrading lean_harvesters and other creeps.
         // Upgrade calculator
         // There should be some way to calculate wether we can afford waiting
         // for better creep or if we are in some kind of emergency mode, e.g. we
@@ -143,7 +153,10 @@ var spawner = {
                 }
             }
 
-            while (bodyCost(role_settings.body) < energy_limit - bodyCost(upgrade_tmpl)) {
+            while (
+                bodyCost(role_settings.body) < energy_limit - bodyCost(upgrade_tmpl) &&
+                role_settings.body.filter(item => item == WORK).length <= this.calc_upper_work_limit()
+                ) {
                 role_settings.body.push(...upgrade_tmpl);
             }
         }

@@ -12,7 +12,7 @@ var room_balancer = {
         // 1500 game ticks time to live per creep
         // 3000 energy per 300 game ticks per source
         let work_parts = weakest_harvester.body.length - 1
-        let harvesters_needed = 1 + Math.ceil(
+        let harvesters_needed = Math.ceil(
             (3000 * sources.length) /
             (work_parts * HARVEST_POWER * 300)
         )

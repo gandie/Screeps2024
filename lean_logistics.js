@@ -61,22 +61,17 @@ var leanLogistics = {
 
             var target = Game.getObjectById(creep.memory.cur_pickup_tgt);
             if (!target) {
-                var targets = creep.room.find(FIND_DROPPED_RESOURCES);
-                for (var tgt_index in targets) {
-                    var cur_tgt = targets[tgt_index];
-                    var taken = false;
-                    for (var colleague_index in colleagues) {
-                        var cur_colleague = colleagues[colleague_index];
-                        if (cur_colleague.memory.cur_pickup_tgt == cur_tgt.id) {
-                            taken = true;
-                        }
-                    }
-                    if (!taken) {
-                        creep.memory.cur_pickup_tgt = cur_tgt.id;
-                        break;
-                    }
+                let pickup_tgts = colleagues.map((colleague) => (colleague.memory.cur_pickup_tgt))
+                var targets = creep.room.find(FIND_DROPPED_RESOURCES).filter(
+                    r => pickup_tgts.indexOf(r.id) == -1
+                )
+                if(targets.length) {
+                    target = creep.pos.findClosestByRange(targets)
+                    creep.memory.cur_pickup_tgt = target.id
                 }
-            } else {
+
+            }
+            if (target) {
                 if(creep.pickup(target) == ERR_NOT_IN_RANGE) {
                     creep.moveTo(target, {visualizePathStyle: {stroke: '#0000ff'}});
                 }
