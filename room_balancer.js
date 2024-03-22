@@ -1,5 +1,60 @@
+function bodyCost(body) {
+    let sum = 0;
+    for (let i in body)
+        sum += BODYPART_COST[body[i]];
+    return sum
+}
 var room_balancer = {
+    calc_upgrade_limit: function(role) {
+        // XXX: this must cooperate with room_balancer.update_spawn_limits()
+        // 1500 game ticks time to live per creep
+        // 3000 energy per 300 game ticks per source
+        let work_parts = 1 + Math.ceil(
+            (3000) /
+            (300 * HARVEST_POWER)
+        )
+        return work_parts
+    },
+    upgrade_bodies: function(base_config, cur_room) {
+        // Upgrade calculator
+        // There should be some way to calculate wether we can afford waiting
+        // for better creep or if we are in some kind of emergency mode, e.g. we
+        // dont generate income as we have no harvesters/logistics
+        for(var role in base_config) {
+            var role_settings = base_config[role];
+            var upgrade_tmpl = role_settings.upgrade_tmpl;
 
+            // energyAvailable is our default energy limit trying to build
+            // creep as soon as possible
+            var energy_limit = cur_room.energyAvailable;
+
+            if (role_settings.vital) {
+                var creeps = _.filter(
+                    Game.creeps,
+                    (creep) => (
+                        (creep.memory.room == cur_room.name) &&
+                        (creep.memory.role == role)
+                    )
+                )
+                // this might be too naive:
+                // maybe also consider ttl and pairs of lean harvesters and logistics
+                if (creeps.length) {
+                    energy_limit = cur_room.energyCapacityAvailable
+                }
+            }
+
+            const upgrade_limit = this.calc_upgrade_limit(role)
+            let upgrade_count = 0
+            while (
+                bodyCost(role_settings.body) < energy_limit - bodyCost(upgrade_tmpl) &&
+                upgrade_count < upgrade_limit
+            ) {
+                upgrade_count++
+                role_settings.body.push(...upgrade_tmpl)
+            }
+        }
+        return base_config
+    },
     update_spawn_limits: function(cur_room) {
         let sources = cur_room.find(FIND_SOURCES)
         let lean_harvesters = _.filter(
@@ -20,10 +75,10 @@ var room_balancer = {
         cur_room.memory.spawn_limits.lean_harvester = harvesters_needed
 
     },
-    run: function(room) {
+    run: function(room, spawn_cfg) {
         var cur_room = Game.rooms[room]
         var cur_controller = cur_room.controller
-
+        spawn_cfg = this.upgrade_bodies(spawn_cfg, cur_room)
         var containers = cur_room.find(FIND_STRUCTURES, {
             filter: (structure) => {
                 return (structure.structureType == STRUCTURE_CONTAINER)
@@ -89,6 +144,7 @@ var room_balancer = {
             }
         }
 
+        return spawn_cfg
     }
 }
 
