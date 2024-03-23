@@ -46,6 +46,7 @@ var spawner = {
             item => {
                 if (item.calc_config) {
                     item.calc_config(cur_room, level)
+                    //console.log(`Config computed: ${JSON.stringify(item.cfg, null, 4)}`)
                 }
             }
         )

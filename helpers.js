@@ -1,6 +1,10 @@
 const helpers = {
     bodyCost: function(body) {
-        return body.reduce((a, b) => a + b, 0)
+        let sum = 0
+        for (let item of body) {
+            sum += BODYPART_COST[item]
+        }
+        return sum
     }
 }
 

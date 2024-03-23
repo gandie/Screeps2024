@@ -48,6 +48,7 @@ var leanHarvester = {
             upgrade_count++
             this.cfg.body.push(...this.cfg.upgrade_tmpl)
         }
+
     },
     run: function(creep) {
         let mining_spot = creep.room.memory.mining_spots[creep.memory.mining_spot_idx]
