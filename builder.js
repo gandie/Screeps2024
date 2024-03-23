@@ -28,7 +28,7 @@ var roleBuilder = {
             upgrade_count < upgrade_limit
         ) {
             upgrade_count++
-            role_settings.body.push(...this.cfg.upgrade_tmpl)
+            this.cfg.body.push(...this.cfg.upgrade_tmpl)
         }
     },
 

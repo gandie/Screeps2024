@@ -1,6 +1,6 @@
 const helpers = {
     bodyCost: function(body) {
-        return 0
+        return body.reduce((a, b) => a + b, 0)
     }
 }
 
