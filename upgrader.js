@@ -13,7 +13,7 @@ var roleUpgrader = {
 
         this.cfg.limit = Math.floor(mining_spots_count / 3)
 
-        if ((level > 2) && has_container) {
+        if ((level >= 2) && has_container) {
             this.cfg.limit = 0
             return
         }

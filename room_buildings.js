@@ -94,6 +94,7 @@ var auto_buildings = {
                 cur_room.memory.build_tasks.lvl2_extensions = true
             }
 
+            /*
             if (!construction_pending && !cur_room.memory.build_tasks.lvl2_road_first_source) {
                 let first_source = cur_room.find(FIND_SOURCES)[0]
                 this.build_road(cur_room, spawn, first_source)
@@ -105,19 +106,11 @@ var auto_buildings = {
                 this.build_road(cur_room, spawn, second_source)
                 cur_room.memory.build_tasks.lvl2_road_second_source = true
             }
+            */
         }
 
         // another 5 extensions, tower
         if (cur_controller.level >= 3) {
-            if (!construction_pending && !cur_room.memory.build_tasks.lvl3_extensions) {
-                this.build_on_grid({
-                    cur_room,
-                    spawn,
-                    building_type: STRUCTURE_EXTENSION,
-                })
-                cur_room.memory.build_tasks.lvl3_extensions = true
-            }
-
             if (!construction_pending && !cur_room.memory.build_tasks.lvl3_tower) {
                 this.build_on_grid({
                     cur_room,
@@ -128,6 +121,14 @@ var auto_buildings = {
                 cur_room.memory.build_tasks.lvl3_tower = true
             }
 
+            if (!construction_pending && !cur_room.memory.build_tasks.lvl3_extensions) {
+                this.build_on_grid({
+                    cur_room,
+                    spawn,
+                    building_type: STRUCTURE_EXTENSION,
+                })
+                cur_room.memory.build_tasks.lvl3_extensions = true
+            }
 
             if (!construction_pending && !cur_room.memory.build_tasks.lvl3_road_to_controller) {
                 this.build_road(cur_room, spawn, cur_controller)
