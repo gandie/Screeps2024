@@ -19,7 +19,6 @@ var roleBuilder = require('builder')
 // room based stuff
 var towers = require('towers')
 var room_buildings = require('room_buildings')
-var room_balancer = require('room_balancer')
 var room_spawner = require('room_spawner')
 var room_initializer = require('room_initializer')
 
@@ -38,8 +37,7 @@ module.exports.loop = function () {
 
     for(let room in Game.rooms) {
         room_initializer.run(room, role_map)
-        room_balancer.run(room, role_map)
-        room_spawner.run(room)
+        room_spawner.run(room, role_map)
         room_buildings.run(room)
         towers.run(room)
     }

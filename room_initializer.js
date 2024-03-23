@@ -40,30 +40,10 @@ let room_initializer = {
             cur_room.memory.mining_spots = this.find_mining_spots(cur_room)
         }
 
-        if (!cur_room.memory.switches) {
-            cur_room.memory.switches = {
-                'lvl4_filledstorage': false,
-            }
-        }
-
         // auto building task tracking
         if (!cur_room.memory.build_tasks) {
             cur_room.memory.build_tasks = {}
         }
-
-        if (!cur_room.memory.spawn_limits) {
-            cur_room.memory.spawn_limits = {
-                harvester: 0,
-                lean_harvester: 0,
-                upgrader: 0,
-                lean_upgrader: 0,
-                builder: 0,
-                lean_builder: 0,
-                lean_logistics: 0,
-            }
-            console.log(`Spawn limit memory initialized for room ${room}`)
-        }
-
 
         let spawn_cfg = {
             harvester: {
@@ -134,9 +114,7 @@ let room_initializer = {
                 limit: 0,
             }
         }
-        cur_room.memory.spawn_cfg = spawn_cfg
-        // XXX: for now we use this hack to get a CLONE of the spawn_cfg
-        Object.entries(JSON.parse(JSON.stringify(spawn_cfg))).map(
+        Object.entries(spawn_cfg).map(
             (entry) => role_map[entry[0]]['cfg'] = entry[1]// console.log(, entry[1])
         )
     }

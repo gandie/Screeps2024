@@ -1,6 +1,37 @@
+const helpers = require('helpers')
+
 var roleBuilder = {
 
-    /** @param {Creep} creep **/
+    calc_config: function(cur_room, level) {
+        var containers = cur_room.find(FIND_STRUCTURES, {
+            filter: (structure) => {
+                return (structure.structureType == STRUCTURE_CONTAINER)
+            }
+        })
+        var has_container = containers.length != 0
+        let mining_spots = cur_room.memory.mining_spots
+        let mining_spots_count = Object.keys(mining_spots).length
+
+        this.cfg.limit = Math.floor(mining_spots_count / 3)
+
+        if ((level > 2) && has_container) {
+            this.cfg.limit = 0
+            return
+        }
+
+        let energy_limit = cur_room.energyAvailable
+
+        const upgrade_limit = 5
+        let upgrade_count = 0
+        while (
+            helpers.bodyCost(this.cfg.body) < energy_limit - helpers.bodyCost(this.cfg.upgrade_tmpl) &&
+            upgrade_count < upgrade_limit
+        ) {
+            upgrade_count++
+            role_settings.body.push(...this.cfg.upgrade_tmpl)
+        }
+    },
+
     run: function(creep) {
 
         if(creep.memory.building && creep.store[RESOURCE_ENERGY] == 0) {

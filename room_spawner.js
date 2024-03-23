@@ -28,7 +28,7 @@ var spawner = {
         return {mining_spot_idx: mining_spot_idx, spot: spot}
 
     },
-    run: function(room) {
+    run: function(room, role_map) {
         var cur_room = Game.rooms[room]
         const cur_spawn = cur_room.find(FIND_MY_SPAWNS)[0]
         for(var name in Memory.creeps) {
@@ -41,50 +41,55 @@ var spawner = {
             }
         }
 
-        for(var role in cur_room.memory.spawn_cfg) {
-
-            if (cur_spawn.spawning) {
-                break
+        const level = cur_room.controller.level
+        Object.values(role_map).forEach(
+            item => {
+                if (item.calc_config) {
+                    item.calc_config(cur_room, level)
+                }
             }
+        )
 
-            var role_settings = cur_room.memory.spawn_cfg[role];
-            var role_creeps =  _.filter(
+        if (cur_spawn.spawning) {
+            return
+        }
+
+        for (const role in role_map) {
+            const role_obj = role_map[role]
+            const role_limit = role_obj.cfg.limit
+            const role_count =  _.filter(
                 Game.creeps,
                 (creep) => (creep.memory.role == role) && (creep.memory.room == room)
-            );
-            var role_limit = cur_room.memory.spawn_limits[role];
-
-            if (role_creeps.length < role_limit) {
-                var newName = role + Game.time;
-
-                role_settings.memory['room'] = room
-
-                var canspawn = cur_spawn.spawnCreep(
-                    role_settings.body,
+            ).length
+            if (role_count < role_limit) {
+                const newName = role + Game.time
+                role_obj.cfg.memory['room'] = room
+                let canspawn = cur_spawn.spawnCreep(
+                    role_obj.cfg.body,
                     newName,
                     {
-                        memory: role_settings.memory,
+                        memory: role_obj.cfg.memory,
                         dryRun: true,
                     }
                 )
-                if ((canspawn == 0) && (role_settings.memory.use_mining_spot)) {
+                if ((canspawn == 0) && (role_obj.cfg.memory.use_mining_spot)) {
                     let res = this.find_mining_slot(cur_room, role)
                     if (!res) {
                         canspawn = 1
                     } else {
                         res.spot.cur += 1
-                        role_settings.memory['mining_spot_idx'] = res.mining_spot_idx
+                        role_obj.cfg.memory['mining_spot_idx'] = res.mining_spot_idx
                         console.log(`Mining spot assigned ${res.mining_spot_idx}`)
                     }
                 }
-
+    
                 if (canspawn == 0) {
                     console.log("Spawning new: " + newName);
                     cur_spawn.spawnCreep(
-                        role_settings.body,
+                        role_obj.cfg.body,
                         newName,
                         {
-                            memory: role_settings.memory,
+                            memory: role_obj.cfg.memory,
                         }
                     )
                     return
